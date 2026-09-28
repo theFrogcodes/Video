@@ -1,0 +1,71 @@
+name: Netflix Dubber (macOS)
+
+on:
+  push:
+    paths:
+      - "NetflixDubber/**"
+      - ".github/workflows/netflix-dubber.yml"
+  pull_request:
+    paths:
+      - "NetflixDubber/**"
+      - ".github/workflows/netflix-dubber.yml"
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "Also build a release .app and upload it as an artifact"
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: macos-15
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+        working-directory: NetflixDubber
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain
+        run: |
+          swift --version
+          xcodebuild -version
+
+      - name: Cache SwiftPM
+        uses: actions/cache@v4
+        with:
+          path: |
+            NetflixDubber/.build/repositories
+            NetflixDubber/.build/artifacts
+          key: spm-${{ runner.os }}-${{ hashFiles('NetflixDubber/Package.swift', 'NetflixDubber/Package.resolved') }}
+
+      - name: Build (app + tests)
+        run: swift build --build-tests
+
+      - name: Unit tests
+        run: swift test --skip-build --filter DubberCoreTests
+
+      - name: Package .app (debug) and verify bundle
+        run: |
+          ./scripts/build-app.sh debug
+          plutil -lint "build/Netflix Dubber.app/Contents/Info.plist"
+          otool -L "build/Netflix Dubber.app/Contents/MacOS/NetflixDubber" | head -40
+          codesign --verify --verbose "build/Netflix Dubber.app"
+
+      - name: Release build
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.release }}
+        run: |
+          ./scripts/build-app.sh release
+          ditto -c -k --keepParent "build/Netflix Dubber.app" "build/NetflixDubber.zip"
+
+      - name: Upload app
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.release }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: NetflixDubber-app
+          path: NetflixDubber/build/NetflixDubber.zip

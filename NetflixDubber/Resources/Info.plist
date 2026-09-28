@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <key>CFBundleExecutable</key>
+    <string>NetflixDubber</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.netflixdubber.app</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>Netflix Dubber</string>
+    <key>CFBundleDisplayName</key>
+    <string>Netflix Dubber</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>15.0</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.entertainment</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>NSAudioCaptureUsageDescription</key>
+    <string>Netflix Dubber listens to the audio your Mac is playing so it can dub Japanese dialogue into English in real time. Nothing is recorded or saved.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>Used to transcribe Japanese dialogue on-device when Apple speech recognition is selected.</string>
+</dict>
+</plist>
