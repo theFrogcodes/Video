@@ -27,10 +27,14 @@ private final class StubTranslator: DialogueTranslator {
     private let lock = NSLock()
     private(set) var requests: [TranslationRequest] = []
 
-    func translate(_ request: TranslationRequest) async throws -> Translation {
+    private func record(_ request: TranslationRequest) {
         lock.lock()
+        defer { lock.unlock() }
         requests.append(request)
-        lock.unlock()
+    }
+
+    func translate(_ request: TranslationRequest) async throws -> Translation {
+        record(request)
         return Translation(english: "Line \(request.japanese)", delivery: "calm")
     }
 }

@@ -79,12 +79,16 @@ final class MockTransport: HTTPTransport, @unchecked Sendable {
     }
 
     func send(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
-        lock.lock()
-        requests.append(request)
-        let response = queue.isEmpty ? Response(status: 500, body: Data()) : queue.removeFirst()
-        lock.unlock()
+        let response = record(request)
         let http = HTTPURLResponse(url: request.url!, statusCode: response.status, httpVersion: "HTTP/1.1", headerFields: response.headers)!
         return (response.body, http)
+    }
+
+    private func record(_ request: URLRequest) -> Response {
+        lock.lock()
+        defer { lock.unlock() }
+        requests.append(request)
+        return queue.isEmpty ? Response(status: 500, body: Data()) : queue.removeFirst()
     }
 
     var requestCount: Int {

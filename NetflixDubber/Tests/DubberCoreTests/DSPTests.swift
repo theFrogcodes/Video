@@ -9,7 +9,7 @@ final class ResamplerTests: XCTestCase {
         XCTAssertEqual(output.count, 16_000)
         let body = Array(output[1_000..<15_000])   // skip filter edges
         XCTAssertEqual(estimatedFrequency(body, sampleRate: 16_000), 1_000, accuracy: 5)
-        XCTAssertEqual(rms(body), 0.8 / 2.0.squareRoot(), accuracy: 0.02)
+        XCTAssertEqual(rms(body), 0.8 / Float(2).squareRoot(), accuracy: 0.02)
     }
 
     func testNonIntegerRatioAndUpsampling() {
@@ -21,7 +21,7 @@ final class ResamplerTests: XCTestCase {
         let tts = Synth.sine(frequency: 300, duration: 0.5, sampleRate: 24_000, amplitude: 0.5)
         let up = StreamingResampler.resample(tts, from: 24_000, to: 48_000)
         XCTAssertEqual(up.count, 24_000)
-        XCTAssertEqual(rms(Array(up[2_000..<22_000])), 0.5 / 2.0.squareRoot(), accuracy: 0.02)
+        XCTAssertEqual(rms(Array(up[2_000..<22_000])), 0.5 / Float(2).squareRoot(), accuracy: 0.02)
     }
 
     func testRejectsContentAboveOutputNyquist() {
