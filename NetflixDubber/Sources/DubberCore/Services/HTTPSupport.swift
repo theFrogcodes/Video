@@ -62,7 +62,22 @@ public struct URLSessionTransport: HTTPTransport {
     }
 
     public func send(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
+        #if canImport(FoundationNetworking)
+        // swift-corelibs-foundation: bridge the callback API.
+        let (data, response): (Data, URLResponse) = try await withCheckedThrowingContinuation { continuation in
+            session.dataTask(with: request) { data, response, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else if let response {
+                    continuation.resume(returning: (data ?? Data(), response))
+                } else {
+                    continuation.resume(throwing: URLError(.badServerResponse))
+                }
+            }.resume()
+        }
+        #else
         let (data, response) = try await session.data(for: request)
+        #endif
         guard let http = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
         }

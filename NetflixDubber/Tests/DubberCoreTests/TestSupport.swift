@@ -1,5 +1,8 @@
 import Foundation
 import XCTest
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 @testable import DubberCore
 
 /// Deterministic synthetic audio for tests.

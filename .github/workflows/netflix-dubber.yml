@@ -21,6 +21,34 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Compiles and tests the platform-independent core (DubberCore) with the
+  # Linux Swift toolchain: fast feedback that doesn't need a macOS runner.
+  core-linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container: swift:6.1-noble
+    steps:
+      - uses: actions/checkout@v4
+      - name: Core-only package
+        run: |
+          mkdir -p /tmp/core
+          cp -R NetflixDubber/Sources NetflixDubber/Tests /tmp/core/
+          rm -rf /tmp/core/Sources/NetflixDubber
+          cat > /tmp/core/Package.swift <<'MANIFEST'
+          // swift-tools-version:5.10
+          import PackageDescription
+          let package = Package(
+              name: "DubberCore",
+              targets: [
+                  .target(name: "DubberCore"),
+                  .testTarget(name: "DubberCoreTests", dependencies: ["DubberCore"]),
+              ]
+          )
+          MANIFEST
+      - name: Build and test
+        working-directory: /tmp/core
+        run: swift test
+
   build-and-test:
     runs-on: macos-15
     timeout-minutes: 45
