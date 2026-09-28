@@ -1,5 +1,7 @@
 # MyMeds UK — AI Video Ad Generator
 
+> This repository also contains **[Netflix Dubber](NetflixDubber/README.md)**, a macOS app for live Japanese → English AI dubbing of Netflix shows.
+
 Generates a 45–55 second vertical (9:16) promotional video for TikTok / Instagram Reels / YouTube Shorts using:
 - Real app screenshots (provided by you)
 - AI voiceover via ElevenLabs (British male voice)

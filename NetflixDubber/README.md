@@ -5,7 +5,7 @@ A native macOS app (Swift / SwiftUI) that dubs Japanese Netflix shows into Engli
 - **Listens to what your Mac is playing** (Netflix in Safari, Chrome, Edge, Firefox, Arc, …) and mutes the original Japanese track while it runs.
 - **Recognises who is speaking.** An on-device neural voiceprint (WeSpeaker via [FluidAudio](https://github.com/FluidInference/FluidAudio), on the Neural Engine) identifies each voice in the scene.
 - **Creates a new English voice automatically for every new speaker.** A deep male voice gets a deep English voice, a high/young voice gets a bright one, and so on. Every character keeps their voice for the rest of the session.
-- **Dubs each line within about 2 seconds.** Speech recognition, then Claude translation that fits the line's timing and tone, then text-to-speech in that character's voice. The original soundtrack is lowered (ducked) under the dub so music and effects stay audible.
+- **Dubs each line a few seconds after it's spoken** (typically 2–4 s, depending on the providers you choose). Speech recognition, then Claude translation that fits the line's timing and tone, then text-to-speech in that character's voice. The original soundtrack is lowered (ducked) under the dub so music and effects stay audible.
 
 ```
  Netflix audio ──► Core Audio process tap (original muted) ──┬──► pass-through, ducked ───────────────┐
@@ -82,6 +82,7 @@ Press **Stop** (or quit the app) and your Mac's normal audio is restored immedia
 | One character keeps changing voice | Move *New-voice sensitivity* towards **Merge**. |
 | Two characters share a voice | Move it towards **Split**, or assign a different voice in the Voices panel. |
 | Dub is far behind | Use **Claude Haiku 4.5** and **Apple voices** for the lowest latency, or lower *Drop dubs later than* in Settings. |
+| Music or sound effects trigger lines | Loud score can look like speech. Those lines are usually filtered out (empty or "not dialogue" translations), but they still cost a recognition request. |
 | "Neural voice recognition couldn't load" | The model download failed (network/firewall). The app falls back to a built-in spectral voiceprint, which works but is less precise with similar voices. |
 | Keychain prompts after rebuilding | Expected with ad-hoc signing: a rebuilt binary is a "new" app to the Keychain. Choose *Always Allow*. |
 
